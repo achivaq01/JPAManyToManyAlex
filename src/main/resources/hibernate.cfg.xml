@@ -3,7 +3,9 @@
 <hibernate-configuration>
    <session-factory>
       <!-- List of XML mapping files -->
-      <mapping class = "com.project.Employee"/>
-      <mapping class = "com.project.Contact"/>
+      <mapping class = "com.project.Author"/>
+      <mapping class = "com.project.Library"/>
+      <mapping class = "com.project.Book"/>
+      <mapping class = "com.project.Person"/>
    </session-factory>
 </hibernate-configuration>

@@ -35,41 +35,118 @@ public class Manager {
     public static void close () {
         factory.close();
     }
-  
-    public static Employee addEmployee(String firstName, String lastName, int salary){
+
+    public static Book addBook(String name, String publishingHouse){
         Session session = factory.openSession();
         Transaction tx = null;
-        Employee result = null;
+        Book result = null;
         try {
             tx = session.beginTransaction();
-            result = new Employee(firstName, lastName, salary);
-            session.save(result); 
+            result = new Book(name, publishingHouse);
+            session.save(result);
             tx.commit();
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            e.printStackTrace();
             result = null;
         } finally {
-            session.close(); 
+            session.close();
         }
         return result;
     }
 
-    public static Contact addContact(String lname, String lmail){
+    public static Library addLibrary(String name, String city){
         Session session = factory.openSession();
         Transaction tx = null;
-        Contact result = null;
+        Library result = null;
         try {
             tx = session.beginTransaction();
-            result = new Contact(lname, lmail);
-            session.save(result); 
+            result = new Library(name, city);
+            session.save(result);
             tx.commit();
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            e.printStackTrace();
             result = null;
         } finally {
-            session.close(); 
+            session.close();
+        }
+        return result;
+    }
+
+    public static void updateLibrary(long libraryId, String name, String city, Set<Book> books){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            Library obj = (Library) session.get(Library.class, libraryId);
+            obj.setName(name);;
+            obj.setCity(city);
+            obj.setBooks(books);;
+            session.update(obj);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
+
+    public static Person addPerson(String dni, String name, String phoneNumber) {
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Person result = null;
+        try {
+            tx = session.beginTransaction();
+            result = new Person(dni, name, phoneNumber);
+            session.save(result);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+            result = null;
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    public static void updatePerson(long personId, String dni, String name, String phoneNumber, Set<Book> books) {
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            Person obj = (Person) session.get(Person.class, personId);
+            obj.setDni(dni);
+            obj.setName(name);;
+            obj.setPhoneNumber(phoneNumber);
+            obj.setBooks(books);
+            session.update(obj);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
+
+    public static Author addAuthor(String name) {
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Author result = null;
+        try {
+            tx = session.beginTransaction();
+            result = new Author(name);
+            session.save(result);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+            result = null;
+        } finally {
+            session.close();
         }
         return result;
     }
@@ -90,42 +167,22 @@ public class Manager {
         }
         return obj;
     }
-    
-    public static void updateContact(long contactId, String name, String email, Set<Employee> employees){
-        Session session = factory.openSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-            Contact obj = (Contact) session.get(Contact.class, contactId); 
-            obj.setName(name);
-            obj.setEmail(email);
-            obj.setEmployees(employees);
-            session.update(obj); 
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
-        } finally {
-            session.close(); 
-        }
-    }
 
-    public static void updateEmployee(long employeeId, String firstName, String lastName, int salary){
+    public static void updateAuthor(long authorId, String name, Set<Book> books) {
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            Employee obj = (Employee) session.get(Employee.class, employeeId); 
-            obj.setFirstName(firstName);
-            obj.setLastName(lastName);
-            obj.setSalary(salary);
-            session.update(obj); 
+            Author obj = (Author) session.get(Author.class, authorId);
+            obj.setName(name);;
+            obj.setBooks(books);
+            session.update(obj);
             tx.commit();
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            e.printStackTrace();
         } finally {
-            session.close(); 
+            session.close();
         }
     }
   
@@ -145,7 +202,7 @@ public class Manager {
         }
     }
 
-    public static <T> Collection<?> listCollection(Class<? extends T> clazz) {
+    public static <T> Collection<?> listCollectionA(Class<? extends T> clazz) {
         return listCollection(clazz, "");
     }
 
@@ -156,16 +213,16 @@ public class Manager {
         try {
             tx = session.beginTransaction();
             if (where.length() == 0) {
-                result = session.createQuery("FROM " + clazz.getName()).list(); 
+                result = session.createQuery("FROM " + clazz.getName()).list();
             } else {
                 result = session.createQuery("FROM " + clazz.getName() + " WHERE " + where).list();
             }
             tx.commit();
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();
-            e.printStackTrace(); 
+            e.printStackTrace();
         } finally {
-            session.close(); 
+            session.close();
         }
         return result;
     }
@@ -181,6 +238,7 @@ public class Manager {
         }
         return txt;
     }
+
 
     public static void queryUpdate (String queryString) {
         Session session = factory.openSession();
